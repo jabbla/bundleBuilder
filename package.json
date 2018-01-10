@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "jest": "^22.0.4"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.1"
   }
 }

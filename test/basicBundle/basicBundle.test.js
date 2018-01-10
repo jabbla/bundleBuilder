@@ -1,4 +1,5 @@
 const BundleBuilder = require('../../src/BundleBuilder.js');
+const utils = require('../../src/lib/utils.js');
 const path = require('path');
 const fs = require('fs');
 
@@ -13,7 +14,8 @@ describe('entry with single module', () => {
         });
 
         test('output file existed', done => {
-            fs.rmdirSync(path.resolve(outputPath, '..'));
+            let dir = path.resolve(outputPath, '..');
+            fs.existsSync(dir) && utils.mustDeleteDir(dir);
             Builder.run(function(){
                 expect(fs.existsSync(outputPath)).toBeTruthy()
                 done();
