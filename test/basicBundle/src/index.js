@@ -1,3 +1,3 @@
 const module1 = require('./module1.js');
 
-console.log(module1.name);
+_output_ = module1.name;

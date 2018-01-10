@@ -42,4 +42,19 @@ utils.mustDeleteDir = function(path) {
     }
 };
 
+utils.testBundleFile = function(path){
+    var fileStr = fs.readFileSync(path, {
+        encoding: 'utf-8'
+    });
+
+    let wraper = `
+        (function(){
+            var _output_;
+            ${fileStr}
+            return _output_;
+        })();
+    `
+    return eval(wraper);
+};
+
 module.exports = utils;

@@ -9,9 +9,9 @@ class BundleBuilder{
         this.output = option.output;
         this.moduleMode = option.moduleMode || 'commonjs';
     }
-    run(callback){
+    run(){
         this._resolveModules();
-        this._emitFile();
+        return this._emitFile();
     }
     _resolveModules(){
         let {moduleMode, entry} = this,
@@ -31,10 +31,10 @@ class BundleBuilder{
     _emitFile(){
         let {output, bundleString} = this;
 
-        utils.mustWriteFileAsync(output, bundleString).then(() => {
-            console.log(`${output} : build bundleFile success~`);
+        return utils.mustWriteFileAsync(output, bundleString).then(() => {
+            console.log(`${output} : build bundleFile success`);
         }).catch((err) => {
-            console.log(`${output} : build bundleFile failed~`);
+            console.log(`${output} : build bundleFile failed`);
         });
     }
 }
