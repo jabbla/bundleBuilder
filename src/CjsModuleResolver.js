@@ -18,10 +18,13 @@ class CjsModuleResolver extends ModuleResolver {
         lines.push('(function(){');
         lines.push('var _modules_ = {};');
         lines.push(`var _require_ = function(moduleId){
+            if(moduleId === -1){
+                return undefined;
+            }
             return _modules_[moduleId].exports;
         };`)
 
-        let entryFileStr = this._resolveSingleFile({path: entry, subModules: subModules});
+        let entryFileStr = this._resolveSingleFile({path: entry, subModules: subModules, rootPath: ''});
 
         lines.push('(function(_require_){');
         lines.push(subModules.reduce((prev, subModule) => {
@@ -38,16 +41,16 @@ class CjsModuleResolver extends ModuleResolver {
     }
     _resolveNormalModule(moduleOption){
         let {lines} = this,
-            {path: modulePath, moduleId} = moduleOption,
+            {path: modulePath, moduleId, rootPath} = moduleOption,
             subModules = []
 
-        let moduleFileStr = this._resolveSingleFile({path: modulePath, subModules: subModules});
+        let moduleFileStr = this._resolveSingleFile({path: modulePath, subModules: subModules, rootPath: rootPath});
 
         lines.push('(function(_require_, module, exports){');
         
         lines.push(subModules.reduce((prev, subModule) => {
             let targetStr = `require(${subModule.pathStr})`,
-                newStr = `_require_(${subModule.moduleId})`;
+                newStr = subModule.circular? '_require_(-1)' : `_require_(${subModule.moduleId})`;
 
             return prev.replace(targetStr, newStr);
         }, moduleFileStr));
@@ -57,12 +60,18 @@ class CjsModuleResolver extends ModuleResolver {
         return this.currentModuleId++;
     }
     _resolveSingleFile(fileOption){
-        let {path: filePath, subModules} = fileOption;
+        let {path: filePath, subModules, rootPath} = fileOption;
 
         let fileStr = fs.readFileSync(filePath, {
             encoding: 'utf-8'
         });
-        let subModulesPath = this._findPaths(fileStr);
+        let subModulesPath = this._findPaths(fileStr),
+            rootPathsMap = rootPath.split('$(divider)').reduce((prev, item) => {
+                if(item){
+                    prev[item] = true;
+                }
+                return prev;
+            }, {});
 
         subModulesPath.forEach((subModulePathStr) => {
             let quotePattern = /['"]+/g,
@@ -70,6 +79,13 @@ class CjsModuleResolver extends ModuleResolver {
                 module, subModuleAbsPath = path.resolve(path.dirname(filePath), subModulePath),
                 cachedModule = this.cachedModules[subModuleAbsPath];
             
+            if(rootPathsMap[subModuleAbsPath]){
+                subModules.push({
+                    pathStr: subModulePathStr,
+                    circular: true
+                });
+                return;
+            }
             if(cachedModule){
                 module = {
                     pathStr: subModulePathStr,
@@ -77,7 +93,8 @@ class CjsModuleResolver extends ModuleResolver {
                 };
             }else{
                 let subModuleId = this._resolveNormalModule({
-                    path: subModuleAbsPath
+                    path: subModuleAbsPath,
+                    rootPath: `${rootPath}$(divider)${filePath}`
                 });
                 module = {
                     pathStr: subModulePathStr,
@@ -85,7 +102,6 @@ class CjsModuleResolver extends ModuleResolver {
                 };
                 this.cachedModules[subModuleAbsPath] = {id: subModuleId};
             }
-
             subModules.push(module);
         });
 

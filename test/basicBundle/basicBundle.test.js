@@ -49,34 +49,10 @@ describe('entry with recursive module', () => {
             });
             return Builder.run().then(() => {
                 utils.testBundleFile(outputPath);
-                expect(global._output1_).toBeUndefined();
-                expect(global._output2_).toBe('module0');
+                expect(global._output2_).toBeUndefined();
+                expect(global._output1_).toBe('module0');
+                expect(global._output3_).toBe('module1');
             });
         });
     });
-
-    // describe('AMD', () => {
-    //     const entryPath = path.resolve(__dirname, './amd/src/index.js');
-    //     const outputPath = path.resolve(__dirname, './amd/dist/bundle.js');
-    //     const Builder = new BundleBuilder({
-    //         entry: entryPath,
-    //         output: outputPath
-    //     });
-
-    //     test('output file existed', () => {
-    //         let dir = path.resolve(outputPath, '..');
-    //         fs.existsSync(dir) && utils.mustDeleteDir(dir);
-    //         return Builder.run().then(() => {
-    //             expect(fs.existsSync(outputPath)).toBeTruthy();
-    //         });
-    //     });
-
-    //     test('avaliable bundle file', () => {
-    //         let dir = path.resolve(outputPath, '..');
-    //         fs.existsSync(dir) && utils.mustDeleteDir(dir);
-    //         return Builder.run().then(() => {
-    //             expect(utils.testBundleFile(outputPath)).toBe(27);
-    //         });
-    //     });
-    // });
 });

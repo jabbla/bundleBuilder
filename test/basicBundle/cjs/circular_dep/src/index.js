@@ -1,3 +1,3 @@
-var module0 = require('./module0.js');
+var module0 = require('./module1.js');
 
-_output2_ = module0.name;
+_output3_ = module0.name;
