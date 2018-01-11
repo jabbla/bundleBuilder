@@ -2,6 +2,7 @@ const fs = require('fs');
 const utils = require('./lib/utils.js');
 
 const CjsModuleResolver = require('./CjsModuleResolver.js');
+const AmdModuleResolver = require('./AmdModuleResolver.js');
 
 class BundleBuilder{
     constructor(option){
@@ -23,6 +24,9 @@ class BundleBuilder{
         switch(moduleMode){
             case 'commonjs': 
                 moduleResolver = new CjsModuleResolver(moduleOption);
+                break;
+            case 'amd': 
+                moduleResolver = new AmdModuleResolver(moduleOption);
                 break;
             default: moduleResolver = new CjsModuleResolver(moduleOption);
         }

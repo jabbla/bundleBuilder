@@ -3,39 +3,12 @@ const utils = require('../../src/lib/utils.js');
 const path = require('path');
 const fs = require('fs');
 
-describe('entry with single module', () => {
-    const entryPath = path.resolve(__dirname, './src/index.js');
-    const outputPath = path.resolve(__dirname, './dist/bundle.js');
-    
-    describe('CommonJs', () => {
-        const Builder = new BundleBuilder({
-            entry: entryPath,
-            output: outputPath
-        });
-
-        test('output file existed', () => {
-            let dir = path.resolve(outputPath, '..');
-            fs.existsSync(dir) && utils.mustDeleteDir(dir);
-            return Builder.run().then(() => {
-                expect(fs.existsSync(outputPath)).toBeTruthy();
-            });
-        });
-
-        test('avaliable bundle file', () => {
-            let dir = path.resolve(outputPath, '..');
-            fs.existsSync(dir) && utils.mustDeleteDir(dir);
-            return Builder.run().then(() => {
-                expect(utils.testBundleFile(outputPath)).toBe('module1');
-            });
-        });
-    });
-});
-
 describe('entry with recursive module', () => {
-    const entryPath = path.resolve(__dirname, './src/index1-1.js');
-    const outputPath = path.resolve(__dirname, './dist/bundle1-1.js');
+    
     
     describe('CommonJs', () => {
+        const entryPath = path.resolve(__dirname, './src/index1-1.js');
+        const outputPath = path.resolve(__dirname, './dist/bundle1-1.js');
         const Builder = new BundleBuilder({
             entry: entryPath,
             output: outputPath
@@ -50,11 +23,60 @@ describe('entry with recursive module', () => {
         });
 
         test('avaliable bundle file', () => {
-            let dir = path.resolve(outputPath, '..');
-            fs.existsSync(dir) && utils.mustDeleteDir(dir);
             return Builder.run().then(() => {
                 expect(utils.testBundleFile(outputPath)).toBe(27);
             });
         });
+
+        test('cached module', () => {
+            const entryPath = path.resolve(__dirname, './cjs/src/index.js');
+            const outputPath = path.resolve(__dirname, './cjs/dist/bundle.js');
+            const Builder = new BundleBuilder({
+                entry: entryPath,
+                output: outputPath
+            }); 
+            return Builder.run().then(() => {
+                expect(utils.testBundleFile(outputPath)).toBeTruthy();
+            });
+        });
+
+        test('circular dependency', () => {
+            const entryPath = path.resolve(__dirname, './cjs/circular_dep/src/index.js');
+            const outputPath = path.resolve(__dirname, './cjs/circular_dep/dist/bundle.js');
+            const Builder = new BundleBuilder({
+                entry: entryPath,
+                output: outputPath
+            });
+            return Builder.run().then(() => {
+                utils.testBundleFile(outputPath);
+                expect(global._output1_).toBeUndefined();
+                expect(global._output2_).toBe('module0');
+            });
+        });
     });
+
+    // describe('AMD', () => {
+    //     const entryPath = path.resolve(__dirname, './amd/src/index.js');
+    //     const outputPath = path.resolve(__dirname, './amd/dist/bundle.js');
+    //     const Builder = new BundleBuilder({
+    //         entry: entryPath,
+    //         output: outputPath
+    //     });
+
+    //     test('output file existed', () => {
+    //         let dir = path.resolve(outputPath, '..');
+    //         fs.existsSync(dir) && utils.mustDeleteDir(dir);
+    //         return Builder.run().then(() => {
+    //             expect(fs.existsSync(outputPath)).toBeTruthy();
+    //         });
+    //     });
+
+    //     test('avaliable bundle file', () => {
+    //         let dir = path.resolve(outputPath, '..');
+    //         fs.existsSync(dir) && utils.mustDeleteDir(dir);
+    //         return Builder.run().then(() => {
+    //             expect(utils.testBundleFile(outputPath)).toBe(27);
+    //         });
+    //     });
+    // });
 });

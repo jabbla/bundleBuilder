@@ -43,7 +43,7 @@ class CjsModuleResolver extends ModuleResolver {
 
         let moduleFileStr = this._resolveSingleFile({path: modulePath, subModules: subModules});
 
-        lines.push('(function(_require_, module){');
+        lines.push('(function(_require_, module, exports){');
         
         lines.push(subModules.reduce((prev, subModule) => {
             let targetStr = `require(${subModule.pathStr})`,
@@ -52,7 +52,7 @@ class CjsModuleResolver extends ModuleResolver {
             return prev.replace(targetStr, newStr);
         }, moduleFileStr));
 
-        lines.push(`})(_require_, _modules_[${this.currentModuleId}] = {});`);
+        lines.push(`})(_require_, _modules_[${this.currentModuleId}] = {}, _modules_[${this.currentModuleId}].exports = {});`);
 
         return this.currentModuleId++;
     }
@@ -66,16 +66,27 @@ class CjsModuleResolver extends ModuleResolver {
 
         subModulesPath.forEach((subModulePathStr) => {
             let quotePattern = /['"]+/g,
-                subModulePath = subModulePathStr.replace(quotePattern, '');
+                subModulePath = subModulePathStr.replace(quotePattern, ''),
+                module, subModuleAbsPath = path.resolve(path.dirname(filePath), subModulePath),
+                cachedModule = this.cachedModules[subModuleAbsPath];
             
-            let subModuleId = this._resolveNormalModule({
-                path: path.resolve(path.dirname(filePath), subModulePath)
-            });
+            if(cachedModule){
+                module = {
+                    pathStr: subModulePathStr,
+                    moduleId: cachedModule.id
+                };
+            }else{
+                let subModuleId = this._resolveNormalModule({
+                    path: subModuleAbsPath
+                });
+                module = {
+                    pathStr: subModulePathStr,
+                    moduleId: subModuleId 
+                };
+                this.cachedModules[subModuleAbsPath] = {id: subModuleId};
+            }
 
-            subModules.push({
-                pathStr: subModulePathStr,
-                moduleId: subModuleId
-            });
+            subModules.push(module);
         });
 
         return fileStr;
