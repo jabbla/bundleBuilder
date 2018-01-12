@@ -7,24 +7,29 @@
         
 
             (function(_require_, module, exports){
-                module.exports = {
-    name: 'module1'
+                var module1 = _require_(-1);
+
+_output2_ = module1;
+module.exports = {
+    name: 'module0'
 };
             })(_require_, _modules_[0] = {}, _modules_[0].exports = {});
         
 
             (function(_require_, module, exports){
-                var module1 = _require_(0)
+                var module0 = _require_(0);
 
-module.exports = {};
+_output1_ = module0.name;
+module.exports = {
+    name: 'module1'
+};
             })(_require_, _modules_[1] = {}, _modules_[1].exports = {});
         
 
             (function(_require_){
                 var module0 = _require_(1);
-var module1 = _require_(1);
 
-_output_ = (module0 === module1);
+_output3_ = module0.name;
             })(_require_);
         })();
         

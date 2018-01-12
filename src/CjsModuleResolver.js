@@ -15,27 +15,27 @@ class CjsModuleResolver extends ModuleResolver {
             subModules = [],
             lines = this.lines = [];
 
-        lines.push('(function(){');
-        lines.push('var _modules_ = {};');
-        lines.push(`var _require_ = function(moduleId){
-            if(moduleId === -1){
-                return undefined;
-            }
-            return _modules_[moduleId].exports;
-        };`)
+        lines.push(`
+        (function(){
+            var _modules_ = {};
+            var _require_ = function(moduleId){
+                return _modules_[moduleId] && _modules_[moduleId].exports;
+            };
+        `);
 
         let entryFileStr = this._resolveSingleFile({path: entry, subModules: subModules, rootPath: ''});
-
-        lines.push('(function(_require_){');
-        lines.push(subModules.reduce((prev, subModule) => {
-            let targetStr = `require(${subModule.pathStr})`,
-                newStr = `_require_(${subModule.moduleId})`;
-
-            return prev.replace(targetStr, newStr);
-        }, entryFileStr));
-        lines.push('})(_require_);');
-
-        lines.push('})();');
+        
+        lines.push(`
+            (function(_require_){
+                ${subModules.reduce((prev, subModule) => {
+                    let targetStr = `require(${subModule.pathStr})`,
+                        newStr = `_require_(${subModule.moduleId})`;
+        
+                    return prev.replace(targetStr, newStr);
+                }, entryFileStr)}
+            })(_require_);
+        })();
+        `);
 
         return lines.join('\n');
     }
@@ -46,16 +46,16 @@ class CjsModuleResolver extends ModuleResolver {
 
         let moduleFileStr = this._resolveSingleFile({path: modulePath, subModules: subModules, rootPath: rootPath});
 
-        lines.push('(function(_require_, module, exports){');
+        lines.push(`
+            (function(_require_, module, exports){
+                ${subModules.reduce((prev, subModule) => {
+                    let targetStr = `require(${subModule.pathStr})`,
+                        newStr = subModule.circular? '_require_(-1)' : `_require_(${subModule.moduleId})`;
         
-        lines.push(subModules.reduce((prev, subModule) => {
-            let targetStr = `require(${subModule.pathStr})`,
-                newStr = subModule.circular? '_require_(-1)' : `_require_(${subModule.moduleId})`;
-
-            return prev.replace(targetStr, newStr);
-        }, moduleFileStr));
-
-        lines.push(`})(_require_, _modules_[${this.currentModuleId}] = {}, _modules_[${this.currentModuleId}].exports = {});`);
+                    return prev.replace(targetStr, newStr);
+                }, moduleFileStr)}
+            })(_require_, _modules_[${this.currentModuleId}] = {}, _modules_[${this.currentModuleId}].exports = {});
+        `);
 
         return this.currentModuleId++;
     }

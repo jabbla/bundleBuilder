@@ -49,9 +49,9 @@ describe('entry with recursive module', () => {
             });
             return Builder.run().then(() => {
                 utils.testBundleFile(outputPath);
+                expect(global._output3_).toBe('module1');
                 expect(global._output2_).toBeUndefined();
                 expect(global._output1_).toBe('module0');
-                expect(global._output3_).toBe('module1');
             });
         });
     });
