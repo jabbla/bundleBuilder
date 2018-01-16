@@ -13,6 +13,9 @@ class ModuleResolver{
     }
     _resolveEntry(entryOption){}
     _resolveNormalModule(moduleOption){}
+    _applyModuleLoaders(fileStr){
+        return fileStr;
+    }
 }
 
 module.exports = ModuleResolver;

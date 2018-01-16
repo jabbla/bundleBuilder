@@ -65,6 +65,9 @@ class CjsModuleResolver extends ModuleResolver {
         let fileStr = fs.readFileSync(filePath, {
             encoding: 'utf-8'
         });
+
+        fileStr = this._applyModuleLoaders(fileStr);
+
         let subModulesPath = this._findPaths(fileStr),
             rootPathsMap = rootPath.split('$(divider)').reduce((prev, item) => {
                 if(item){
