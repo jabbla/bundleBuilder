@@ -9,17 +9,16 @@ class BundleBuilder{
         this.entry = option.entry;
         this.output = option.output;
         this.moduleMode = option.moduleMode || 'commonjs';
+        this.loaderFuncs = option.loaders;
     }
     run(){
         this._resolveModules();
         return this._emitFile();
     }
     _resolveModules(){
-        let {moduleMode, entry} = this,
+        let {moduleMode, entry, loaderFuncs} = this,
             moduleResolver,
-            moduleOption = {
-                entry: entry
-            };
+            moduleOption = {entry, loaderFuncs};
 
         switch(moduleMode){
             case 'commonjs': 

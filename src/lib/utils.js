@@ -57,4 +57,18 @@ utils.testBundleFile = function(path){
     return eval(wraper);
 };
 
+utils.seriesPromise = function(promiseGenerators, input){
+    var index = 1;
+    var attachPromiseChain = function(promise){
+        if(index === promiseGenerators.length){
+            return;
+        }
+        return promise.then(function(res){
+            return attachPromiseChain(promiseGenerators[index++](res)) || Promise.resolve(res);
+        })
+    };
+    
+    return attachPromiseChain(promiseGenerators[0](input));
+};
+
 module.exports = utils;

@@ -1,3 +1,5 @@
+const ModuleLoader = require('./ModuleLoader.js');
+
 const utils = require('./lib/utils.js');
 
 class ModuleResolver{
@@ -5,6 +7,7 @@ class ModuleResolver{
         this.entry = option && option.entry;
         this.currentModuleId = 0;
         this.cachedModules = {};
+        this.loaderFuncs = option.loaderFuncs || [];
     }
     run(moduleOption){
         let {entry} = this;
@@ -14,7 +17,15 @@ class ModuleResolver{
     _resolveEntry(entryOption){}
     _resolveNormalModule(moduleOption){}
     _applyModuleLoaders(fileStr){
-        return fileStr;
+        let res = fileStr,
+            {loaderFuncs} = this;
+        
+        let promiseGenerators = this.loaderFuncs.map(func => {
+            let moduleLoader = new ModuleLoader({func});
+            return moduleLoader.run.bind(moduleLoader);
+        });
+
+        return utils.seriesPromise(promiseGenerators, fileStr);
     }
 }
 

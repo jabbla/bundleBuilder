@@ -4,8 +4,6 @@ const path = require('path');
 const fs = require('fs');
 
 describe('entry with recursive module', () => {
-    
-    
     describe('CommonJs', () => {
         const entryPath = path.resolve(__dirname, './src/index1-1.js');
         const outputPath = path.resolve(__dirname, './dist/bundle1-1.js');
