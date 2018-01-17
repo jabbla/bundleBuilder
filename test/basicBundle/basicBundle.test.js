@@ -21,6 +21,8 @@ describe('entry with recursive module', () => {
         });
 
         test('avaliable bundle file', () => {
+            let dir = path.resolve(outputPath, '..');
+            fs.existsSync(dir) && utils.mustDeleteDir(dir);
             return Builder.run().then(() => {
                 expect(utils.testBundleFile(outputPath)).toBe(27);
             });
@@ -32,7 +34,9 @@ describe('entry with recursive module', () => {
             const Builder = new BundleBuilder({
                 entry: entryPath,
                 output: outputPath
-            }); 
+            });
+            let dir = path.resolve(outputPath, '..');
+            fs.existsSync(dir) && utils.mustDeleteDir(dir);
             return Builder.run().then(() => {
                 expect(utils.testBundleFile(outputPath)).toBeTruthy();
             });

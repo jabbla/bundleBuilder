@@ -11,11 +11,11 @@ class BundleBuilder{
         this.moduleMode = option.moduleMode || 'commonjs';
         this.loaderFuncs = option.loaders;
     }
-    run(){
-        this._resolveModules();
+    async run(){
+        await this._resolveModules();
         return this._emitFile();
     }
-    _resolveModules(){
+    async _resolveModules(){
         let {moduleMode, entry, loaderFuncs} = this,
             moduleResolver,
             moduleOption = {entry, loaderFuncs};
@@ -29,7 +29,7 @@ class BundleBuilder{
                 break;
             default: moduleResolver = new CjsModuleResolver(moduleOption);
         }
-        this.bundleString = moduleResolver.run();
+        this.bundleString = await moduleResolver.run();
     }
     _emitFile(){
         let {output, bundleString} = this;

@@ -12,6 +12,7 @@
             "program": "${workspaceFolder}\\node_modules\\jest\\bin\\jest.js",
             "cwd": "${workspaceRoot}",
             "args": [
+                "--no-cache",
                 "${workspaceFolder}\\test\\basicBundle\\basicBundle.test.js"
             ]
         },
@@ -22,6 +23,7 @@
             "program": "${workspaceFolder}\\node_modules\\jest\\bin\\jest.js",
             "cwd": "${workspaceRoot}",
             "args": [
+                "--no-cache",
                 "${workspaceFolder}\\test\\moduleLoader\\moduleLoader.test.js"
             ]
         }

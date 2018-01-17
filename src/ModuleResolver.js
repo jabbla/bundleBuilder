@@ -9,10 +9,10 @@ class ModuleResolver{
         this.cachedModules = {};
         this.loaderFuncs = option.loaderFuncs || [];
     }
-    run(moduleOption){
+    async run(moduleOption){
         let {entry} = this;
 
-        return this._resolveEntry({entry: entry});
+        return await this._resolveEntry({entry: entry});
     }
     _resolveEntry(entryOption){}
     _resolveNormalModule(moduleOption){}
@@ -25,7 +25,7 @@ class ModuleResolver{
             return moduleLoader.run.bind(moduleLoader);
         });
 
-        return utils.seriesPromise(promiseGenerators, fileStr);
+        return utils.seriesPromise(promiseGenerators, {fileStr});
     }
 }
 
