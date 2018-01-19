@@ -75,9 +75,13 @@ module.exports = function(option){
 ```
 
 
-## VSCode调试
+## 测试
 
-点击VSCode调试面板中的``basicBundle``调试按钮，即可运行``test``目录下的测试脚本
+```bash
+npm run test
+```
+
+也可以点击VSCode调试面板中的``moduleLoader``和``basicBundle``调试按钮分别调试对应的两个功能。
 
 
 

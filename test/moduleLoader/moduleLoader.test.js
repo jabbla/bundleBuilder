@@ -45,3 +45,21 @@ describe('Async ModuleLoader', () => {
         expect(utils.testBundleFile(outputPath)).toBe(6);
     });
 });
+
+describe('Babel Loader', () => {
+    test('Loader Process Correctly', async () => {
+        const entryPath = path.resolve(__dirname, './babel/src/index.js');
+        const outputPath = path.resolve(__dirname, './babel/dist/bundle.js');
+        const babelLoader = require('./babel/loaders/babelLoader.js');
+        const Builder = new BundleBuilder({
+            entry: entryPath,
+            output: outputPath,
+            loaders: [
+                babelLoader
+            ]
+        });
+        await Builder.run();
+        
+        expect(utils.testBundleFile(outputPath)).toBe('module0module1');
+    });
+})
