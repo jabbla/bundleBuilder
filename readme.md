@@ -48,8 +48,8 @@ const Builder = new BundleBuilder({
 
 #### 异步loader
 
-> 需返回Promise实例
 
+1. 返回promise实例
 ```js
 module.exports = function(option){
     let {fileStr} = option; //fileStr属性为模块文件内容字符串
@@ -59,6 +59,16 @@ module.exports = function(option){
             //需为resolve传入一个对象，其中fileStr代表处理后的模块内容字符串
         }, 100);
     });
+};
+```
+
+2. async函数
+```js
+module.exports = async function(option){
+    let {fileStr} = option; //fileStr属性为模块文件内容字符串
+
+    let fileStr = await bablePrevSolve(fileStr);
+    return {fileStr: fileStr};
 };
 ```
 
