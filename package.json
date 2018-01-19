@@ -3,9 +3,8 @@
     "jest": "^22.0.4"
   },
   "dependencies": {
-    "asyncawait": "^1.0.6",
-    "bluebird": "^3.5.1",
-    "co": "^4.6.0"
+    "async": "^2.6.0",
+    "bluebird": "^3.5.1"
   },
   "scripts": {
     "test": "jest --no-cache"

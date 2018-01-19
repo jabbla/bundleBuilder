@@ -1,3 +1,3 @@
 module.exports = {
-    syncLoaders: ${loader1}+${loader2}
+    asyncLoaders: ${loader1}+${loader2}
 };

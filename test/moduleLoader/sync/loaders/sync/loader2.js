@@ -1,3 +1,4 @@
-module.exports = function(fileStr){
-    return fileStr.replace('${loader2}', 2);
+module.exports = function(option){
+    let {fileStr} = option;
+    return {fileStr: fileStr.replace('${loader2}', 2)};
 };

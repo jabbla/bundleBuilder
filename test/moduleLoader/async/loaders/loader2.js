@@ -1,7 +1,8 @@
-module.exports = function(fileStr){
+module.exports = function(option){
+    let {fileStr} = option;
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            reject(fileStr.replace('${loader2}', 2));
-        }, 1000);
+            resolve({fileStr: fileStr.replace('${loader2}', 2)});
+        }, 100);
     });
 };
