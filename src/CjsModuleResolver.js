@@ -103,7 +103,8 @@ class CjsModuleResolver extends ModuleResolver {
                     pathStr: subModulePathStr,
                     circular: true
                 });
-                return;
+
+                return fileStr;
             }
             if(cachedModule){
                 module = {

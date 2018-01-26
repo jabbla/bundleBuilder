@@ -49,6 +49,8 @@ describe('entry with recursive module', () => {
                 entry: entryPath,
                 output: outputPath
             });
+            let dir = path.resolve(outputPath, '..');
+            fs.existsSync(dir) && utils.mustDeleteDir(dir);
             return Builder.run().then(() => {
                 utils.testBundleFile(outputPath);
                 expect(global._output3_).toBe('module1');
