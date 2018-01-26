@@ -6,7 +6,8 @@
   },
   "dependencies": {
     "async": "^2.6.0",
-    "bluebird": "^3.5.1"
+    "bluebird": "^3.5.1",
+    "tapable": "^0.2.7"
   },
   "scripts": {
     "test": "jest --no-cache"

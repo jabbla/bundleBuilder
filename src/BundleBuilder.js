@@ -1,5 +1,6 @@
 const fs = require('fs');
 const utils = require('./lib/utils.js');
+const Tapable = require('./lib/Tapable.js');
 
 const CjsModuleResolver = require('./CjsModuleResolver.js');
 const AmdModuleResolver = require('./AmdModuleResolver.js');
@@ -10,8 +11,10 @@ class BundleBuilder{
         this.output = option.output;
         this.moduleMode = option.moduleMode || 'commonjs';
         this.loaderFuncs = option.loaders;
+        Tapable.call(this);
     }
     async run(){
+        this.applyPlugins('run', this);
         await this._resolveModules();
         return this._emitFile();
     }
@@ -41,5 +44,6 @@ class BundleBuilder{
         });
     }
 }
+Tapable.mixin(BundleBuilder.prototype);
 
 module.exports = BundleBuilder;

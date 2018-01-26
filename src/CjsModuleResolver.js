@@ -11,6 +11,7 @@ class CjsModuleResolver extends ModuleResolver {
         return await super.run(moduleOption);
     }
     async _resolveEntry(entryOption){
+        super._resolveEntry();
         let {entry} = entryOption,
             subModules = [],
             lines = this.lines = [];
@@ -40,16 +41,20 @@ class CjsModuleResolver extends ModuleResolver {
         return lines.join('\n');
     }
     async _resolveNormalModule(moduleOption){
+        await super._resolveNormalModule(moduleOption);
+
         let {lines} = this,
             {path: modulePath, moduleId, rootPath} = moduleOption,
             subModules = []
 
         let moduleFileStr = await this._resolveSingleFile({path: modulePath, subModules: subModules, rootPath: rootPath});
 
-        this._templateModuleStr({subModules, moduleFileStr});
+        this._templateModuleStr({subModules, moduleFileStr, lines});
         return this.currentModuleId++;
     }
     async _resolveSingleFile(fileOption){
+        await super._resolveSingleFile(fileOption);
+
         let {path: filePath, subModules, rootPath} = fileOption;
 
         let fileStr = fs.readFileSync(filePath, {
@@ -60,8 +65,9 @@ class CjsModuleResolver extends ModuleResolver {
         return await this._resolveSubModules({rootPath, fileStr, subModules, filePath});
     }
     _templateModuleStr(options){
-        let {subModules, moduleFileStr} = options;
-        let lines = this.lines;
+        super._templateModuleStr(options);
+
+        let {subModules, moduleFileStr, lines} = options;
 
         lines.push(`
             (function(_require_, module, exports){
